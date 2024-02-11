@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View CSV</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-200 font-sans text-gray-900">
+    <div class="container mx-auto my-10">
+        <div class="bg-white p-8 shadow-md rounded-md">
+            <h2 class="text-3xl mb-4 font-bold">Filename: {{ renamed_filename }}</h2> <!-- Display renamed filename here -->
+            <h3 class="text-lg mb-2 font-semibold">CSV Data</h3>
+            <table class="w-full mb-4">
+                {% for row in csv_data %}
+                    <tr>
+                        {% for item in row %}
+                            <td class="border px-4 py-2">{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+            <form action="{{ url_for('download_csv') }}" method="post">
+                <input type="hidden" name="filename" value="{{ filename }}">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Download CSV</button>
+            </form>
+            <a href="{{ url_for('upload_marksheet') }}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Upload More Files</a>
+        </div>
+    </div>
+</body>
+</html>

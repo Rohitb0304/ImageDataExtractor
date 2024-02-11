@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marksheet CSV Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-200 font-sans text-gray-900">
+    <div class="container mx-auto my-10">
+        <h2 class="text-3xl font-bold mb-8">Marksheet CSV Generator</h2>
+        <form id="marksheetForm" enctype="multipart/form-data" action="/upload-marksheet" method="POST">
+            <div class="mb-4">
+                <label class="inline-block mr-2">Select Marksheet Type:</label>
+                <input type="radio" id="marksheet-type-I" name="marksheet-type" value="marksheet-I" class="mr-2" checked>
+                <label for="marksheet-type-I" class="mr-4">Marksheet I</label>
+                <input type="radio" id="marksheet-type-II" name="marksheet-type" value="marksheet-II">
+                <label for="marksheet-type-II">Marksheet II</label>
+            </div>
+            <input type="file" accept=".png" id="marksheetInput" name="file" required class="p-2 border rounded-md mb-4" multiple> <!-- Add 'multiple' attribute -->
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Generate CSV</button>
+            <p id="uploadMessage" class="mt-2 text-gray-600"></p>
+        </form>
+        
+        <div id="output" class="mt-6 font-semibold"></div>
+    </div>
+
+    <script>
+        // JavaScript code for processing the form submission can remain unchanged
+        function processMarksheet() {
+            var form = document.getElementById('marksheetForm');
+            var formData = new FormData(form);
+            var marksheetType = document.querySelector('input[name="marksheet-type"]:checked').value;
+            
+            fetch('/upload-marksheet', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Display upload message based on marksheet type
+                    var uploadMessage = marksheetType === 'marksheet-I' ? 'Please upload marksheet(s) of sem 1' : 'Please upload marksheet(s) of sem 2';
+                    document.getElementById('uploadMessage').innerText = uploadMessage;
+                } else {
+                    throw new Error('Upload failed');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

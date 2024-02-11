@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Success</h2>
+                <div id="loading-icon" class="spinner-border text-primary mb-4" role="status" style="display: none;"></div>
+                <div id="notifications" class="mb-4"></div> <!-- Display notifications here -->
+                <h3 class="text-lg mb-2 font-semibold">Generated CSV Filename: <span id="filename">{{ filename }}</span></h3> <!-- Display filename here -->
+                <a href="{{ url_for('view_csv') }}" class="btn btn-primary mb-2">View CSV</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // JavaScript code to update notifications and show loading icon
+        document.addEventListener("DOMContentLoaded", function() {
+            var defaultFilename = "{{ filename }}"; // Get the default filename dynamically from the server-side
+            var filename = prompt("Please enter a filename for the CSV file:", defaultFilename);
+            
+            // Check if user has entered a filename or canceled the prompt
+            if (filename === null || filename === "") {
+                filename = defaultFilename; // Use the default filename if user cancels or leaves it blank
+            } else {
+                // Automatically add .csv extension if user doesn't provide it
+                if (!filename.endsWith('.csv')) {
+                    filename += '.csv';
+                }
+            }
+
+            document.getElementById('filename').innerText = filename; // Update displayed filename
+            
+            var notifications = [
+                { message: 'csv file (' + filename + ') created...', color: 'blue' }, // Blue color for the first notification
+                { message: 'marksheets data added in the file', color: 'blue' }, // Blue color for the second notification
+                { message: 'Data Generation Successful', color: 'blue' } // Blue color for the third notification
+            ];
+
+            function showNotification(notification, index) {
+                document.getElementById('loading-icon').style.display = 'block'; // Show loading icon
+                var notificationElement = document.createElement('div');
+                notificationElement.innerHTML = `<span>&#10003;</span><span style="color: ${notification.color};">${notification.message}</span>`;
+                document.getElementById('notifications').appendChild(notificationElement);
+                setTimeout(function() {
+                    document.getElementById('notifications').lastChild.lastChild.style.color = 'green'; // Change color to green after the delay
+                }, 3000);
+                
+                if (index === notifications.length - 1) {
+                    setTimeout(function() {
+                        document.getElementById('loading-icon').style.display = 'none';
+                    }, 3000); // Delay of 3000 milliseconds (3 seconds)
+                }
+            }
+
+            function displayNotifications(notifications) {
+                var index = 0;
+
+                function displayNextNotification() {
+                    if (index < notifications.length) {
+                        showNotification(notifications[index], index);
+                        index++;
+                        // Display next notification after a short delay
+                        setTimeout(displayNextNotification, 3000); // Delay of 3000 milliseconds (3 seconds)
+                    }
+                }
+
+                // Start displaying notifications
+                displayNextNotification();
+            }
+
+            // Start displaying notifications
+            displayNotifications(notifications);
+        });
+    </script>
+</body>
+</html>
